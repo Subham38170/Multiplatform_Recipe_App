@@ -1,3 +1,4 @@
+import org.gradle.declarative.dsl.schema.FqName.Empty.packageName
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -8,6 +9,10 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+
+    id("app.cash.sqldelight") version "2.2.1"
+
+
 }
 
 kotlin {
@@ -41,9 +46,28 @@ kotlin {
     }
     
     sourceSets {
+
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
+
+
+            //SQLDelight
+            implementation(libs.android.driver)
+
+            //Ktor
+            implementation(libs.ktor.client.okhttp)
+
+
+        }
+        iosMain.dependencies {
+            //SQLDelight
+            implementation(libs.native.driver)
+
+
+            //Ktor
+            implementation(libs.ktor.client.darwin)
+
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -54,13 +78,67 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+
+            //Ktor
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+
+
+            //Adaptive Navigation Suite
+            implementation(libs.material3.adaptive.navigation.suite)
+            implementation(libs.material3.adaptive)
+            implementation(libs.material.icons.extended)
+
+            // Navigation 3
+            implementation(libs.androidx.navigation3.runtime)
+
+
+            //Coil
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor3)
+
+
+            //Koin
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.compose.viewmodel.navigation)
+
+
+
+            //Datetime
+            implementation(libs.kotlinx.datetime) // Check for the latest version
+
+            //Setting
+            implementation(libs.multiplatform.settings) // Check
+
+
+            //Adapter
+            implementation(libs.primitive.adapters)
+
         }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            //SQLDelight
+            implementation(libs.sqlite.driver)
+
+            //Ktor
+            implementation(libs.ktor.client.java) // or ktor-client-apache, ktor-client-jetty
+
+
+        }
+        webMain.dependencies {
+            //SQLDelight
+            implementation(npm("@cashapp/sqldelight-sqljs-worker", "2.0.2"))
+            implementation(npm("sql.js", "1.8.0"))
+
+            //Ktor
+            implementation(libs.ktor.client.js)
+
         }
     }
 }
@@ -104,6 +182,15 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "org.subham.recipeapp"
             packageVersion = "1.0.0"
+        }
+    }
+}
+
+
+sqldelight {
+    databases {
+        create("RecipeAppDb") {
+            packageName = "org.subham.recipeapp"
         }
     }
 }
