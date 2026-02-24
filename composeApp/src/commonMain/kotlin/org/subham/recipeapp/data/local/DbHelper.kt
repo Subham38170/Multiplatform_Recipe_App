@@ -2,7 +2,9 @@ package org.subham.recipeapp.data.local
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.subham.recipeapp.Recipe
 import org.subham.recipeapp.RecipeAppDb
+import org.subham.recipeapp.data.local.adapters.listOfStringAdapter
 
 class DbHelper(
     private val driverFactory: DatabaseFactory
@@ -11,16 +13,22 @@ class DbHelper(
     private val mutex = Mutex()
 
 
-    suspend fun <Result: Any> withDatabse(
+    suspend fun <Result : Any> withDatabse(
         block: suspend (RecipeAppDb) -> Result
     ) = mutex.withLock {
         db?.let {
             db = createDb(driverFactory)
         }
-        return @return@withLock block(db!!)
+        return@withLock block(db!!)
     }
 
     private suspend fun createDb(
         driverFactory: DatabaseFactory
-    ) = RecipeAppDb(driver = driverFactory.createDriver())
+    ) = RecipeAppDb(
+        driver = driverFactory.createDriver(),
+        RecipeAdapter = Recipe.Adapter(
+            ingredientsAdapter = listOfStringAdapter,
+            instructionsAdapter = listOfStringAdapter
+        )
+    )
 }

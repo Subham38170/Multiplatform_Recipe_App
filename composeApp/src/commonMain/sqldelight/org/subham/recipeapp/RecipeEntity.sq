@@ -1,0 +1,77 @@
+import kotlin.String;
+import kotlin.collections.List;
+
+CREATE TABLE Recipe(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    category TEXT NOT NULL,
+    area TEXT NOT NULL,
+    imageUrl TEXT,
+    youtubeLink TEXT,
+    ingredients TEXT AS List<String> NOT NULL,
+    instructions TEXT AS List<String> NOT NULL,
+    isFavorite INTEGER NOT NULL,
+    rating INTEGER NOT NULL,
+    duration TEXT DEFAULT '20 Mins',
+    difficulty TEXT DEFAULT 'Easy'
+);
+
+
+insertRecipe:
+INSERT INTO Recipe(
+id,title,description,category,area,imageUrl,youtubeLink,ingredients,isFavorite,rating,duration,difficulty,instructions
+) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);
+
+
+
+
+selectAllRecipes:
+SELECT * FROM Recipe;
+
+selectRecipeById:
+SELECT * FROM Recipe WHERE id = ?;
+
+
+
+upsertRecipe {
+    UPDATE Recipe
+    SET title = :title,
+    description = :description,
+    area = :area,
+    category = :category,
+    imageUrl = :imageUrl,
+    youtubeLink = :youtubeLink,
+    ingredients = :ingredients,
+    isFavorite = :isFavorite,
+    rating = :rating,
+    duration = :duration,
+    difficulty = :difficulty,
+    instructions = :instructions
+    WHERE id = :id;
+
+    INSERT OR IGNORE INTO Recipe(
+    id,title,description,category,area,imageUrl,youtubeLink,ingredients,isFavorite,rating,duration,difficulty,instructions
+    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);
+
+}
+updateRecipe:
+UPDATE Recipe
+SET title = ?,
+description = ?,
+category = ?,
+area = ?,
+youtubeLink = ?,
+ingredients = ?,
+isFavorite = ?,
+rating = ?,
+duration = ?,
+difficulty = ?,
+instructions = ?
+WHERE id = ?;
+
+deleteRecipeById:
+DELETE FROM Recipe WHERE id = ?;
+
+deleteAllRecipe:
+DELETE FROM Recipe;

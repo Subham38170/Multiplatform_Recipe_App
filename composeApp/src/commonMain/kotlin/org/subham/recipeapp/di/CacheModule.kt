@@ -14,5 +14,4 @@ val cacheModule = module {
 
 
     single { DbHelper(get()) }
-    single { RecipeAppDb(get()) }
 }
