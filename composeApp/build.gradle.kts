@@ -38,12 +38,7 @@ kotlin {
         browser()
         binaries.executable()
     }
-    
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
+
     
     sourceSets {
 
@@ -82,7 +77,8 @@ kotlin {
             //Ktor
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
-
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.logging)
 
             //Adaptive Navigation Suite
             implementation(libs.material3.adaptive.navigation.suite)
@@ -131,11 +127,10 @@ kotlin {
 
 
         }
-        webMain.dependencies {
+        jsMain.dependencies {
             //SQLDelight
-            implementation(npm("@cashapp/sqldelight-sqljs-worker", "2.0.2"))
-            implementation(npm("sql.js", "1.8.0"))
-
+            implementation(libs.web.worker.driver)
+            implementation(devNpm("copy-webpack-plugin", "9.1.0"))
             //Ktor
             implementation(libs.ktor.client.js)
 
@@ -191,6 +186,7 @@ sqldelight {
     databases {
         create("RecipeAppDb") {
             packageName = "org.subham.recipeapp"
+            generateAsync = true
         }
     }
 }
